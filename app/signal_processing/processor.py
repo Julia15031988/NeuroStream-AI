@@ -9,7 +9,7 @@ from app.signal_processing.analysis import (
 )
 from app.signal_processing.features import (
     calculate_band_power,
-    calculate_fft,
+    calculate_psd,
 )
 from app.signal_processing.preprocessing import (
     bandpass_filter,
@@ -42,11 +42,20 @@ def process_eeg_samples(
 
     average = mean(samples)
 
-    variance = sum((sample - average) ** 2 for sample in samples) / len(samples)
+    variance = sum(
+        (sample - average) ** 2
+        for sample in samples
+    ) / len(samples)
 
     std = math.sqrt(variance)
 
-    rms = math.sqrt(sum(sample**2 for sample in samples) / len(samples))
+    rms = math.sqrt(
+        sum(
+            sample**2
+            for sample in samples
+        )
+        / len(samples)
+    )
 
     cleaned_samples = remove_dc_offset(
         samples,
@@ -57,35 +66,35 @@ def process_eeg_samples(
         sampling_rate,
     )
 
-    frequencies, amplitudes = calculate_fft(
+    frequencies, power_spectral_density = calculate_psd(
         filtered_samples,
         sampling_rate,
     )
 
     delta_power = calculate_band_power(
         frequencies,
-        amplitudes,
+        power_spectral_density,
         0.5,
         4.0,
     )
 
     theta_power = calculate_band_power(
         frequencies,
-        amplitudes,
+        power_spectral_density,
         4.0,
         8.0,
     )
 
     alpha_power = calculate_band_power(
         frequencies,
-        amplitudes,
+        power_spectral_density,
         8.0,
         13.0,
     )
 
     beta_power = calculate_band_power(
         frequencies,
-        amplitudes,
+        power_spectral_density,
         13.0,
         30.0,
     )
