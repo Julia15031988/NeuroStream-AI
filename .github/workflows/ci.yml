@@ -12,6 +12,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      ADMIN_USERNAME: test_admin
+      ADMIN_PASSWORD: test_password
+      SECRET_KEY: test_secret_key_for_ci
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
