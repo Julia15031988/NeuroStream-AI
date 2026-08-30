@@ -16,3 +16,8 @@ app.include_router(websocket_router)
 @app.get("/")
 async def root():
     return {"message": "NeuroStream AI is running"}
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
