@@ -2,6 +2,7 @@ import math
 from statistics import mean
 
 from app.ml.classifier import classify_state
+from app.ml.deep_learning.classifier import classify_eeg_signal
 from app.signal_processing.analysis import (
     calculate_attention_score,
     calculate_relaxation_score,
@@ -38,6 +39,8 @@ def process_eeg_samples(
             "relaxation_score": 0.0,
             "predicted_state": None,
             "prediction_confidence": 0.0,
+            "deep_learning_state": None,
+            "deep_learning_confidence": 0.0,
         }
 
     average = mean(samples)
@@ -127,6 +130,12 @@ def process_eeg_samples(
 
     predicted_state = classification["state"]
     prediction_confidence = classification["confidence"]
+    deep_learning_classification = classify_eeg_signal(
+        filtered_samples,
+    )
+
+    deep_learning_state = deep_learning_classification["state"]
+    deep_learning_confidence = deep_learning_classification["confidence"]
 
     return {
         "samples_count": len(samples),
@@ -144,4 +153,6 @@ def process_eeg_samples(
         "relaxation_score": relaxation_score,
         "predicted_state": predicted_state,
         "prediction_confidence": prediction_confidence,
+        "deep_learning_state": deep_learning_state,
+        "deep_learning_confidence": deep_learning_confidence,
     }
