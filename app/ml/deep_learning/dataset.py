@@ -10,6 +10,12 @@ STATE_TO_LABEL = {
     "drowsy": 2,
 }
 
+STATE_FREQUENCY_RANGES = {
+    "relaxed": (8.0, 13.0),
+    "focused": (13.0, 30.0),
+    "drowsy": (4.0, 8.0),
+}
+
 
 class SyntheticEEGDataset(Dataset):
     def __init__(
@@ -21,16 +27,10 @@ class SyntheticEEGDataset(Dataset):
         self.data: list[torch.Tensor] = []
         self.labels: list[int] = []
 
-        state_frequencies = {
-            "relaxed": 10.0,
-            "focused": 20.0,
-            "drowsy": 6.0,
-        }
-
-        for state, frequency in state_frequencies.items():
+        for state, frequency_range in STATE_FREQUENCY_RANGES.items():
             for _ in range(samples_per_state):
                 signal = self._generate_signal(
-                    frequency=frequency,
+                    frequency_range=frequency_range,
                     signal_length=signal_length,
                     sampling_rate=sampling_rate,
                 )
@@ -40,29 +40,95 @@ class SyntheticEEGDataset(Dataset):
 
     @staticmethod
     def _generate_signal(
-        frequency: float,
+        frequency_range: tuple[float, float],
         signal_length: int,
         sampling_rate: int,
     ) -> torch.Tensor:
-        phase = random.uniform(0.0, 2.0 * math.pi)
+        dominant_frequency = random.uniform(
+            frequency_range[0],
+            frequency_range[1],
+        )
+
+        secondary_frequency = random.uniform(
+            4.0,
+            30.0,
+        )
+
+        phase = random.uniform(
+            0.0,
+            2.0 * math.pi,
+        )
+
+        secondary_phase = random.uniform(
+            0.0,
+            2.0 * math.pi,
+        )
+
+        dominant_amplitude = random.uniform(
+            0.6,
+            1.4,
+        )
+
+        secondary_amplitude = random.uniform(
+            0.05,
+            0.35,
+        )
+
+        noise_std = random.uniform(
+            0.1,
+            0.4,
+        )
+
+        dc_offset = random.uniform(
+            -0.3,
+            0.3,
+        )
 
         values = []
 
         for index in range(signal_length):
             time = index / sampling_rate
 
-            eeg_value = math.sin(
-                2.0 * math.pi * frequency * time + phase
+            dominant_wave = dominant_amplitude * math.sin(
+                2.0
+                * math.pi
+                * dominant_frequency
+                * time
+                + phase
             )
 
-            noise = random.gauss(0.0, 0.15)
+            secondary_wave = secondary_amplitude * math.sin(
+                2.0
+                * math.pi
+                * secondary_frequency
+                * time
+                + secondary_phase
+            )
 
-            values.append(eeg_value + noise)
+            noise = random.gauss(
+                0.0,
+                noise_std,
+            )
 
-        return torch.tensor(values, dtype=torch.float32)
+            eeg_value = (
+                dominant_wave
+                + secondary_wave
+                + noise
+                + dc_offset
+            )
+
+            values.append(eeg_value)
+
+        return torch.tensor(
+            values,
+            dtype=torch.float32,
+        )
 
     def __len__(self) -> int:
         return len(self.data)
 
-    def __getitem__(self, index: int) -> tuple[torch.Tensor, int]:
+    def __getitem__(
+        self,
+        index: int,
+    ) -> tuple[torch.Tensor, int]:
         return self.data[index], self.labels[index]
