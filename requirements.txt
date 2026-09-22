@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+websockets
+numpy
+scipy
+pydantic
+python-dotenv
+pydantic-settings
+scikit-learn
+joblib
+torch

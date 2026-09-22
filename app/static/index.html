@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroStream AI Dashboard</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>NeuroStream AI</h1>
+        <p class="subtitle">
+            Real-time EEG signal processing and AI classification
+        </p>
+
+        <div class="status-card">
+            <span>WebSocket:</span>
+            <strong id="connection-status">Disconnected</strong>
+        </div>
+
+        <section class="card">
+            <h2>Live EEG Signal</h2>
+            <canvas id="eegChart"></canvas>
+        </section>
+
+        <section class="card">
+            <h2>Brainwave Power</h2>
+            <canvas id="powerChart"></canvas>
+        </section>
+
+        <section class="metrics-grid">
+            <div class="metric-card">
+                <h3>Dominant Wave</h3>
+                <p id="dominant-wave">-</p>
+            </div>
+
+            <div class="metric-card">
+                <h3>Attention</h3>
+                <p id="attention-score">-</p>
+            </div>
+
+            <div class="metric-card">
+                <h3>Relaxation</h3>
+                <p id="relaxation-score">-</p>
+            </div>
+        </section>
+
+        <section class="ai-grid">
+            <div class="ai-card">
+                <h3>Machine Learning</h3>
+                <p>
+                    State:
+                    <strong id="ml-state">-</strong>
+                </p>
+                <p>
+                    Confidence:
+                    <strong id="ml-confidence">-</strong>
+                </p>
+            </div>
+
+            <div class="ai-card">
+                <h3>Deep Learning</h3>
+                <p>
+                    State:
+                    <strong id="dl-state">-</strong>
+                </p>
+                <p>
+                    Confidence:
+                    <strong id="dl-confidence">-</strong>
+                </p>
+            </div>
+
+            <div class="ai-card">
+                <h3>CNN</h3>
+                <p>
+                    State:
+                    <strong id="cnn-state">-</strong>
+                </p>
+                <p>
+                    Confidence:
+                    <strong id="cnn-confidence">-</strong>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
